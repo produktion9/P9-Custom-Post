@@ -13,18 +13,18 @@ add_action( 'init', 'register_cpt_p9_custom_post' );
 function register_cpt_p9_custom_post() {
 
   $labels = array( 
-    'name' => _x( 'P9-Custom-Posts', 'p9-custom-post' ),
-    'singular_name' => _x( 'P9-Custom-Post', 'p9-custom-post' ),
-    'add_new' => _x( 'Add New', 'p9-custom-post' ),
-    'add_new_item' => _x( 'Add New P9-Custom-Post', 'p9-custom-post' ),
-    'edit_item' => _x( 'Edit P9-Custom-Post', 'p9-custom-post' ),
-    'new_item' => _x( 'New P9-Custom-Post', 'p9-custom-post' ),
-    'view_item' => _x( 'View P9-Custom-Post', 'p9-custom-post' ),
-    'search_items' => _x( 'Search P9-Custom-Posts', 'p9-custom-post' ),
-    'not_found' => _x( 'No p9-custom-posts found', 'p9-custom-post' ),
-    'not_found_in_trash' => _x( 'No p9-custom-posts found in Trash', 'p9-custom-post' ),
-    'parent_item_colon' => _x( 'Parent P9-Custom-Post:', 'p9-custom-post' ),
-    'menu_name' => _x( 'P9-Custom-Posts', 'p9-custom-post' ),
+    'name' => _x( 'P9 Custom Posts', 'p9-custom-post' ),
+    'singular_name' => _x( 'P9 Custom Post', 'p9-custom-post' ),
+    'add_new' => _x( 'Lägg till', 'p9-custom-post' ),
+    'add_new_item' => _x( 'Lägg till P9 Custom Post', 'p9-custom-post' ),
+    'edit_item' => _x( 'Redigera P9 Custom Post', 'p9-custom-post' ),
+    'new_item' => _x( 'Ny P9 Custom Post', 'p9-custom-post' ),
+    'view_item' => _x( 'Visa P9 Custom Post', 'p9-custom-post' ),
+    'search_items' => _x( 'Sök P9 Custom Posts', 'p9-custom-post' ),
+    'not_found' => _x( 'Inga P9 custom posts hittade', 'p9-custom-post' ),
+    'not_found_in_trash' => _x( 'Inga P9 custom posts hittade i papperskorgen', 'p9-custom-post' ),
+    'parent_item_colon' => _x( 'Förälder P9 Custom Post:', 'p9-custom-post' ),
+    'menu_name' => _x( 'P9 Custom Posts', 'p9-custom-post' ),
   );
 
   $args = array( 
