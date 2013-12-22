@@ -29,7 +29,7 @@ function register_cpt_p9_custom_post() {
     'menu_name' => _x( 'P9 Custom Posts', 'p9-custom-post' ),
   );
 
-  $args = array( 
+  $args = array(
     'labels' => $labels,
     'hierarchical' => true,
     'description' => 'Produktion9 Custom Post Type',
@@ -55,56 +55,83 @@ function register_cpt_p9_custom_post() {
 // Creating the widget 
 class p9_custom_post_widget extends WP_Widget {
 
-function __construct() {
-parent::__construct(
-// Base ID of your widget
-'p9_custom_post_widget', 
+	function __construct() {
+		parent::__construct(
+		// Base ID of your widget
+		'p9_custom_post_widget', 
 
-// Widget name will appear in UI
-__('P9 Custom Posts', 'p9_custom_post_widget_domain'), 
+		// Widget name will appear in UI
+		__('P9 Custom Posts', 'p9_custom_post_widget_domain'), 
 
-// Widget description
-array( 'description' => __( 'Produktion9 Custom Post Type', 'p9_custom_post_widget_domain' ), ) 
-);
-}
+		// Widget description
+		array( 'description' => __( 'Produktion9 Custom Post Type', 'p9_custom_post_widget_domain' ), ) 
+		);
+	}
 
-// Creating widget front-end
-// This is where the action happens
-public function widget( $args, $instance ) {
-$title = apply_filters( 'widget_title', $instance['title'] );
-// before and after widget arguments are defined by themes
-echo $args['before_widget'];
-if ( ! empty( $title ) )
-echo $args['before_title'] . $title . $args['after_title'];
+	// Creating widget front-end
+	// This is where the action happens
+	public function widget( $args, $instance ) {
+		extract($args);
+      $title = empty($instance['title']) ? __('P9 Custom Posts', 'p9_custom_post_widget') : apply_filters('widget_title', $instance['title']);
+      if ( !$number = (int) $instance['number'] )
+        $number = 5;
+      else if ( $number < 1 )
+        $number = 1;
 
-// This is where you run the code and display the output
-echo __( 'Hello, World!', 'p9_custom_post_widget_domain' );
-echo $args['after_widget'];
-}
+      $queryArgs = array(
+        'showposts'         		=> $number,
+        'post_type'      				=> 'p9-custom-post',
+        'nopaging'          		=> 0,
+        'post_status'       		=> 'publish',
+        'excerpt_length' 				=> 2,
+    		'excerpt_readmore' 			=> __('Read more &rarr;', 'upw'),
+        'order'             		=> 'DESC'
+      );
+
+      $r = new WP_Query($queryArgs);
+      if ($r->have_posts()) :
+    ?>
+      <?php echo $before_widget; ?>
+      <?php echo $before_title . $title . $after_title; ?>
+	      <ul>
+		      <?php  while ($r->have_posts()) : $r->the_post(); ?>
+			      <li>
+			      	<?php if ( get_the_post_thumbnail() ) the_post_thumbnail(); else "" ?>
+			      	<h3><?php if ( get_the_title() ) the_title(); else the_ID(); ?></h3>
+			      	<p><?php if ( get_the_excerpt() ) the_excerpt(); else "" ?>
+			      </li>
+		      <?php endwhile; ?>
+	      </ul>
+      <?php echo $after_widget; ?>
+    <?php
+      endif;
+      wp_reset_query();  // Restore global post data stomped by the_post().
+	}
+			
+	// Widget Backend 
+	public function form( $instance ) {
+		$title = esc_attr($instance['title']);
+      if ( !$number = (int) $instance['number'] )
+        $number = 5;
+    ?>
+      <p><label for="<?php echo $this->get_field_id('title'); ?>">
+      <?php _e('Title:'); ?>
+      <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></label></p>
+
+      <p><label for="<?php echo $this->get_field_id('number'); ?>">
+      <?php _e('Number of posts to show:'); ?>
+      <input id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" type="text" value="<?php echo $number; ?>" /></label>
+		<?php 
+	}
 		
-// Widget Backend 
-public function form( $instance ) {
-if ( isset( $instance[ 'title' ] ) ) {
-$title = $instance[ 'title' ];
-}
-else {
-$title = __( 'New title', 'p9_custom_post_widget_domain' );
-}
-// Widget admin form
-?>
-<p>
-<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
-<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-</p>
-<?php 
-}
-	
-// Updating widget replacing old instances with new
-public function update( $new_instance, $old_instance ) {
-$instance = array();
-$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
-return $instance;
-}
+	// Updating widget replacing old instances with new
+	public function update( $new_instance, $old_instance ) {
+		$instance = $old_instance;
+    $instance['title'] = strip_tags($new_instance['title']);
+    $instance['number'] = (int) $new_instance['number'];
+
+    return $instance;
+	}
 } // Class p9_custom_post_widget ends here
 
 // Register and load the widget
