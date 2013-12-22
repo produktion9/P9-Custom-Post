@@ -57,4 +57,5 @@ function p9_custom_post_widget_load_widgets() {
 	require( 'P9-Custom-Post-Widget.php' );
 	register_widget( 'P9_custom_post_widget' );
 }
+add_action( 'widgets_init', 'P9_custom_post_widget' );
 ?>
