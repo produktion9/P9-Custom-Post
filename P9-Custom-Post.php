@@ -8,6 +8,8 @@ Author: Martin Hansson
 Author URI: http://produktion9.se
 License: GPL
 */
+
+// Create admin custom post type
 add_action( 'init', 'register_cpt_p9_custom_post' );
 
 function register_cpt_p9_custom_post() {
@@ -49,5 +51,10 @@ function register_cpt_p9_custom_post() {
   );
 
   register_post_type( 'p9-custom-post', $args );
+}
+// Load widget
+function p9_custom_post_widget_load_widgets() {
+	require( 'P9-Custom-Post-Widget.php' );
+	register_widget( 'P9_custom_post_widget' );
 }
 ?>
