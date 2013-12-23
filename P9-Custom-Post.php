@@ -51,7 +51,7 @@ function register_cpt_p9_custom_post() {
   );
 
   register_post_type( 'p9-custom-post', $args );
-}
+} // End the content block admin custom post type
 
 // Creating the widget 
 class p9_custom_post_widget extends WP_Widget {
@@ -73,18 +73,19 @@ class p9_custom_post_widget extends WP_Widget {
 	public function widget( $args, $instance ) {
 		extract($args);
     $title = empty($instance['title']) ? __('P9 Custom Posts', 'p9_custom_post_widget') : apply_filters('widget_title', $instance['title']);
+    //Number of posts to display
     if ( !$number = (int) $instance['number'] )
       $number = 5;
     else if ( $number < 1 )
       $number = 1;
-
+    //Widget settings
     $queryArgs = array(
       'showposts'         		=> $number,
       'post_type'      				=> 'p9-custom-post',
       'post_status'       		=> 'publish',
       'order'             		=> 'DESC'
     );
-
+    //Check if there are posts to display and display them in ul
     $r = new WP_Query($queryArgs);
       if ($r->have_posts()) :
 	    	echo $before_widget;
@@ -131,7 +132,7 @@ class p9_custom_post_widget extends WP_Widget {
 
     return $instance;
 	}
-} // Class p9_custom_post_widget ends here
+}// Class p9_custom_post_widget ends here
 
 // Register and load the widget
 function p9_custom_post_load_widget() {
