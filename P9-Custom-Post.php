@@ -9,7 +9,7 @@ Author URI: http://produktion9.se
 License: GPL
 */
 
-// Create admin custom post type
+// Create the content block admin custom post type
 add_action( 'init', 'register_cpt_p9_custom_post' );
 
 function register_cpt_p9_custom_post() {
@@ -17,15 +17,15 @@ function register_cpt_p9_custom_post() {
   $labels = array( 
     'name' => _x( 'P9 Custom Posts', 'p9-custom-post' ),
     'singular_name' => _x( 'P9 Custom Post', 'p9-custom-post' ),
-    'add_new' => _x( 'Lägg till', 'p9-custom-post' ),
-    'add_new_item' => _x( 'Lägg till P9 Custom Post', 'p9-custom-post' ),
-    'edit_item' => _x( 'Redigera P9 Custom Post', 'p9-custom-post' ),
-    'new_item' => _x( 'Ny P9 Custom Post', 'p9-custom-post' ),
-    'view_item' => _x( 'Visa P9 Custom Post', 'p9-custom-post' ),
-    'search_items' => _x( 'Sök P9 Custom Posts', 'p9-custom-post' ),
-    'not_found' => _x( 'Inga P9 custom posts hittade', 'p9-custom-post' ),
-    'not_found_in_trash' => _x( 'Inga P9 custom posts hittade i papperskorgen', 'p9-custom-post' ),
-    'parent_item_colon' => _x( 'Förälder P9 Custom Post:', 'p9-custom-post' ),
+    'add_new' => _x( 'Add New', 'p9-custom-post' ),
+    'add_new_item' => _x( 'Add New P9 Custom Post', 'p9-custom-post' ),
+    'edit_item' => _x( 'Edit P9 Custom Post', 'p9-custom-post' ),
+    'new_item' => _x( 'New P9 Custom Post', 'p9-custom-post' ),
+    'view_item' => _x( 'View P9 Custom Post', 'p9-custom-post' ),
+    'search_items' => _x( 'Search P9 Custom Posts', 'p9-custom-post' ),
+    'not_found' => _x( 'No P9 custom posts found', 'p9-custom-post' ),
+    'not_found_in_trash' => _x( 'No P9 custom posts found in Trash', 'p9-custom-post' ),
+    'parent_item_colon' => _x( 'Parent P9 Custom Post:', 'p9-custom-post' ),
     'menu_name' => _x( 'P9 Custom Posts', 'p9-custom-post' ),
   );
 
@@ -52,6 +52,7 @@ function register_cpt_p9_custom_post() {
 
   register_post_type( 'p9-custom-post', $args );
 }
+
 // Creating the widget 
 class p9_custom_post_widget extends WP_Widget {
 
@@ -68,60 +69,58 @@ class p9_custom_post_widget extends WP_Widget {
 		);
 	}
 
-	// Creating widget front-end
-	// This is where the action happens
+	// Widget front-end
 	public function widget( $args, $instance ) {
 		extract($args);
-      $title = empty($instance['title']) ? __('P9 Custom Posts', 'p9_custom_post_widget') : apply_filters('widget_title', $instance['title']);
-      if ( !$number = (int) $instance['number'] )
-        $number = 5;
-      else if ( $number < 1 )
-        $number = 1;
+    $title = empty($instance['title']) ? __('P9 Custom Posts', 'p9_custom_post_widget') : apply_filters('widget_title', $instance['title']);
+    if ( !$number = (int) $instance['number'] )
+      $number = 5;
+    else if ( $number < 1 )
+      $number = 1;
 
-      $queryArgs = array(
-        'showposts'         		=> $number,
-        'post_type'      				=> 'p9-custom-post',
-        'nopaging'          		=> 0,
-        'post_status'       		=> 'publish',
-        'excerpt_length' 				=> 2,
-    		'excerpt_readmore' 			=> __('Read more &rarr;', 'upw'),
-        'order'             		=> 'DESC'
-      );
+    $queryArgs = array(
+      'showposts'         		=> $number,
+      'post_type'      				=> 'p9-custom-post',
+      'post_status'       		=> 'publish',
+      'order'             		=> 'DESC'
+    );
 
-      $r = new WP_Query($queryArgs);
+    $r = new WP_Query($queryArgs);
       if ($r->have_posts()) :
-    ?>
-      <?php echo $before_widget; ?>
-      <?php echo $before_title . $title . $after_title; ?>
-	      <ul>
-		      <?php  while ($r->have_posts()) : $r->the_post(); ?>
-			      <li>
-			      	<?php if ( get_the_post_thumbnail() ) the_post_thumbnail(); else "" ?>
-			      	<h3><?php if ( get_the_title() ) the_title(); else the_ID(); ?></h3>
-			      	<p><?php if ( get_the_excerpt() ) the_excerpt(); else "" ?>
-			      </li>
-		      <?php endwhile; ?>
-	      </ul>
-      <?php echo $after_widget; ?>
-    <?php
-      endif;
-      wp_reset_query();  // Restore global post data stomped by the_post().
+	    	echo $before_widget;
+	      echo $before_title . $title . $after_title;
+	      ?>
+		      <ul>
+			      <?php  while ($r->have_posts()) : $r->the_post(); ?>
+				      <li>
+				      	<?php if ( get_the_post_thumbnail() ) the_post_thumbnail(); else "" ?>
+				      	<h3><a href="<?php the_permalink(); ?>" title="<?php the_title_attribute(array('before'=>'Permalink to: ')); ?>"><?php if ( get_the_title() ) the_title(); else the_ID(); ?></a></h3>
+				      	<p>
+				      	<?php if ( get_the_excerpt() ) the_excerpt(); else ""; ?>
+				      	</p>
+				      </li>
+			      <?php endwhile; ?>
+		      </ul>
+	      <?php
+	      echo $after_widget;
+      endif; // End have posts
+    wp_reset_query();  // Restore global post data stomped by the_post().
 	}
 			
 	// Widget Backend 
 	public function form( $instance ) {
 		$title = esc_attr($instance['title']);
-      if ( !$number = (int) $instance['number'] )
-        $number = 5;
-    ?>
-      <p><label for="<?php echo $this->get_field_id('title'); ?>">
-      <?php _e('Title:'); ?>
-      <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></label></p>
+    if ( !$number = (int) $instance['number'] )
+      $number = 5;
+  		?>
+	      <p><label for="<?php echo $this->get_field_id('title'); ?>">
+	      <?php _e('Title:'); ?>
+	      <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></label></p>
 
-      <p><label for="<?php echo $this->get_field_id('number'); ?>">
-      <?php _e('Number of posts to show:'); ?>
-      <input id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" type="text" value="<?php echo $number; ?>" /></label>
-		<?php 
+	      <p><label for="<?php echo $this->get_field_id('number'); ?>">
+	      <?php _e('Number of posts to show:'); ?>
+	      <input id="<?php echo $this->get_field_id('number'); ?>" name="<?php echo $this->get_field_name('number'); ?>" type="text" value="<?php echo $number; ?>" /></label>
+			<?php 
 	}
 		
 	// Updating widget replacing old instances with new
@@ -139,4 +138,10 @@ function p9_custom_post_load_widget() {
 	register_widget( 'p9_custom_post_widget' );
 }
 add_action( 'widgets_init', 'p9_custom_post_load_widget' );
+
+//Set excerpt length
+add_filter('excerpt_length', 'my_excerpt_length');
+	function my_excerpt_length($length) {
+		return 20; 
+}
 ?>
